@@ -12,13 +12,30 @@ Pipeline de segmentación semántica multiclase sobre ortofotografías RGB del I
 
 ## 📌 Resumen
 
-Se entrenan y comparan tres arquitecturas de segmentación semántica (**U-Net**, **DeepLabv3+**, **U-Net++**) sobre 8 clases de cobertura (Construcción, Bosque, Depósito de agua, Zona verde, Zona dura, Vía, Cerca, Cabecera municipal). El mejor modelo (DeepLabv3+ con encoder ResNet-50) alcanza **mIoU = 0.478** sobre 18 991 parches de test y se exporta a un pipeline vectorial automatizado (rasterizado → vectorización → simplificación RDP a 0.5 m) que produce capas listas para ArcGIS Pro.
+Se entrenan y comparan tres arquitecturas de segmentación semántica (**U-Net**, **DeepLabv3+**, **U-Net++**) sobre 8 clases de cobertura. El mejor modelo (DeepLabv3+ con encoder ResNet-50) se exporta a un pipeline vectorial automatizado (rasterizado → vectorización → simplificación RDP a 0.5 m) que produce capas listas para ArcGIS Pro.
 
-| Modelo | Encoder | Best epoch | Val mIoU | Test mIoU |
-|---|---|---|---|---|
-| U-Net | ResNet-34 | 29 | 0.467 | — |
-| **DeepLabv3+** | **ResNet-50** | **27** | **0.481** | **0.478** |
-| U-Net++ | ResNet-50 | 21 | 0.454 | — |
+**IoU por clase sobre el test set** (18 991 parches, 8 clases temáticas):
+
+| Clase | U-Net (ResNet-34) | **DeepLabv3+ (ResNet-50)** | U-Net++ (ResNet-50) |
+|---|---:|---:|---:|
+| Construcción       | 0.802 | **0.808** | 0.796 |
+| Bosque             | 0.757 | **0.771** | 0.755 |
+| Depósito de agua   | 0.422 | **0.516** | 0.333 |
+| Zona verde         | 0.201 | **0.262** | 0.082 |
+| Zona dura          | **0.302** | 0.299 | 0.243 |
+| Vía                | 0.440 | 0.371 | **0.442** |
+| Cerca              | 0.110 | **0.116** | 0.085 |
+| Cabecera municipal | 0.671 | **0.682** | 0.654 |
+
+Las clases con buena firma espectral en RGB (Construcción, Bosque, Cabecera municipal) alcanzan IoU > 0.65 en los tres modelos. Las clases con respuesta espectral ambigua o lineal fina (Cerca, Zona verde, Zona dura, Vía) presentan IoU < 0.45, lo que confirma la limitación esperable del uso exclusivo de tres bandas visibles.
+
+**Hiperparámetros y época de selección:**
+
+| Modelo | Encoder | Best epoch (early stopping) |
+|---|---|---:|
+| U-Net | ResNet-34 | 29 |
+| **DeepLabv3+** | **ResNet-50** | **27** |
+| U-Net++ | ResNet-50 | 21 |
 
 ---
 
