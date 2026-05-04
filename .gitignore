@@ -1,0 +1,271 @@
+# ============================================
+# GITIGNORE - Proyecto Segmentación Cartográfica
+# ============================================
+
+# Datos (muy grandes para Git)
+# ============================================
+data/raw/*
+data/interim/*
+data/processed/*
+
+# Excepciones: mantener estadísticas y splits espaciales
+!data/interim/estadisticas/
+!data/interim/estadisticas/.gitkeep
+!data/processed/spatial_splits/
+!data/processed/spatial_splits/.gitkeep
+
+# Mantener README en carpetas de datos
+!data/raw/README.md
+!data/interim/README.md
+!data/processed/README.md
+
+# Modelos entrenados (muy pesados)
+# ============================================
+models/checkpoints/
+models/*/checkpoints/*.pth
+models/*/checkpoints/*.h5
+models/*/checkpoints/*.ckpt
+models/traditional/*.pkl
+models/traditional/*.joblib
+
+# Excepciones: mantener configs
+!models/*/config.yaml
+!models/*/README.md
+
+# Resultados (excepto métricas finales)
+# ============================================
+results/predictions/*
+results/vectors/*
+results/visualizations/training/*
+results/visualizations/predictions/*
+
+# Salidas pesadas: rasters de inferencia, mosaicos, postprocesados, dlpk
+# (se distribuyen aparte por Google Drive — ver README)
+results/inferencia_arcgis/
+results/mosaicos/
+results/test_evaluation/deeplabv3_postprocessed/
+results/test_evaluation/deeplabv3_postprocessed_mosaico/
+dlpk_output/
+*.dlpk
+*.pt
+*.pth
+*.h5
+*.ckpt
+
+# Imágenes generadas y capas vectoriales: NO se suben al repo
+# (se distribuyen por Google Drive — ver README)
+results/figures/
+results/vectores/
+results/**/*.png
+results/**/*.jpg
+results/**/*.jpeg
+results/**/*.svg
+results/**/*.pdf
+results/**/*.gpkg
+results/**/*.shp
+results/**/*.shx
+results/**/*.dbf
+results/**/*.prj
+results/**/*.cpg
+results/**/*.sbn
+results/**/*.sbx
+
+# Excepciones: mantener métricas numéricas (livianas, útiles para reproducibilidad)
+!results/evaluation/metrics/
+!results/evaluation/comparative_analysis/
+!results/comparativa_tres_modelos/tabla_resumen_tres_modelos.csv
+!results/test_evaluation/*/test_metrics.json
+!results/test_evaluation/*/confusion_matrix.npy
+
+# Logs
+# ============================================
+logs/*
+*.log
+
+# Excepciones: mantener estructura
+!logs/training/.gitkeep
+!logs/inference/.gitkeep
+!logs/evaluation/.gitkeep
+
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Ambientes virtuales
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Jupyter Notebook
+# ============================================
+.ipynb_checkpoints
+*.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Jupyter outputs guardados (opcional)
+notebooks/*_output.ipynb
+
+# IDEs y Editores
+# ============================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.*.sw[a-z]
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Sistema Operativo
+# ============================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# Temporales
+# ============================================
+tmp/
+temp/
+*.tmp
+*.bak
+*.cache
+*.swp
+nul
+
+# Configuraciones locales
+# ============================================
+configs/local_*.yaml
+configs/personal_*.yaml
+.env
+.env.local
+
+# TensorBoard
+# ============================================
+runs/
+tensorboard_logs/
+
+# Weights & Biases
+# ============================================
+wandb/
+
+# pytest
+# ============================================
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# MyPy
+# ============================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Profiling
+# ============================================
+*.prof
+
+# Archivos de prueba
+# ============================================
+test_outputs/
+debug_outputs/
+
+# Documentos temporales
+# ============================================
+reports/drafts/
+*.docx~
+~$*.docx
+~$*.xlsx
+
+# Archivos grandes de referencia
+# ============================================
+docs/referencias/*.pdf
+docs/referencias/*.zip
+
+# Mantener estructura de carpetas vacías
+# ============================================
+!.gitkeep
+
+# Documentos personales / borradores de tesis (no se suben al repo público)
+# ============================================
+_tesis_local/
+_drive_pending/
+*.docx
+*.docx.md
+TRABAJO*.docx
+RESUMEN_ABSTRACT.docx
+CAP*.docx
+CAPITULO_*.md
+ACTAS_*.md
+DIAGNOSTICO_*.md
+
+# Configuración local de Claude Code
+# ============================================
+.claude/
+
+# Artefactos de comandos mal escritos en Windows
+# ============================================
+nul
+"D:IGAC*"

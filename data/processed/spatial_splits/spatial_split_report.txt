@@ -1,0 +1,46 @@
+================================================================================
+REPORTE DE PARTICIÓN ESPACIAL
+================================================================================
+
+CONFIGURACION:
+  Tamano de cuadricula: 1000m x 1000m
+  Filtro NoData: <=90%
+  Filtro clases minimas: >=2
+  Semilla aleatoria: 42
+
+CUADROS:
+  Total generados: 146
+  Válidos: 146 (100.0%)
+  Inválidos (filtrados): 0 (0.0%)
+
+RAZONES DE FILTRADO:
+  >90% NoData: 0
+  <2 clases: 0
+
+DISTRIBUCIÓN POR SPLIT:
+  TRAIN:   86 cuadros (58.9%)
+  VAL  :   27 cuadros (18.5%)
+  TEST :   33 cuadros (22.6%)
+
+DISTRIBUCIÓN POR CIUDAD Y SPLIT:
+  Ciudad             TRAIN      VAL     TEST    Total
+  -------------------------------------------------------
+  madrid                 8        2        4       14
+  madrid+mosquera        4        1        2        7
+  mosquera              15        5        6       26
+  tabio                  2        0        2        4
+  tocancipa             57       19       19       95
+
+ESTADÍSTICAS DE CLASES EN CUADROS VÁLIDOS:
+  Clase                   Cuadros con clase     % del total
+  ------------------------------------------------------------
+  Construccion                          143           97.9%
+  Bosque                                146          100.0%
+  DepositoAgua                          128           87.7%
+  ZonaVerde                              27           18.5%
+  ZonaDura                              132           90.4%
+  Via                                   145           99.3%
+  Cerca                                 145           99.3%
+  CabeceraMunicipal                     146          100.0%
+
+================================================================================

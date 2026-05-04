@@ -1,0 +1,124 @@
+
+# COMPARACION: U-Net vs DeepLabv3+
+================================================================
+
+## CAMBIOS PRINCIPALES
+
+### 1. CONFIGURACION DEL DATALOADER
+   U-Net:          BATCH_SIZE = 8
+   DeepLabv3+:     BATCH_SIZE = 12
+   
+   Razon: DeepLabv3+ con resnet50 es mas eficiente en memoria
+
+### 2. MODELO
+   U-Net:
+   - model = smp.Unet(
+       encoder_name='resnet34',
+       ...
+     )
+   
+   DeepLabv3+:
+   - model = smp.DeepLabV3Plus(
+       encoder_name='resnet50',
+       ...
+     )
+   
+   Diferencias de arquitectura:
+   - DeepLabv3+ incluye ASPP (Atrous Spatial Pyramid Pooling)
+   - Resnet50 es mas profundo pero similar en VRAM
+   - Mejor en multiscale processing
+
+### 3. TRAINER
+   U-Net:          UNetTrainer
+   DeepLabv3+:     DeepLabV3Trainer
+   
+   Ambos heredan de BaseTrainer, configuracion identica:
+   - Loss: CrossEntropyLoss con class_weights
+   - Optimizer: AdamW (lr=1e-4, weight_decay=1e-4)
+   - Scheduler: CosineAnnealingWarmRestarts
+
+### 4. EXPERIMENTO
+   U-Net:          'unet_resnet34_baseline'
+   DeepLabv3+:     'deeplabv3_resnet50_baseline'
+
+## HIPERPARAMETROS IDENTICOS
+
+- Learning rate:     1e-4
+- Weight decay:      1e-4
+- Num epochs:        100
+- Early stopping:    15 epochs sin mejora
+- Loss function:     CrossEntropyLoss(weight=class_weights, ignore_index=0)
+- Data augmentation: Identica (get_training_augmentation)
+
+## FLUJO IDENTICO
+
+Ambos notebooks siguen la misma estructura:
+1. Setup y configuracion GPU
+2. Cargar class weights
+3. Crear DataLoaders
+4. Crear modelo
+5. Verificar GPU y velocidad
+6. Crear Trainer
+7. Entrenar (loop principal)
+8. Visualizar historial
+9. Cargar mejor checkpoint
+10. Visualizar predicciones
+11. Calcular metricas detalladas
+
+## VENTAJAS COMPARATIVAS
+
+### DeepLabv3+ vs U-Net
+
+VENTAJAS DeepLabv3+:
++ ASPP para multi-scale features
++ Mejor en capturar contexto global
++ Generalmente mejor mIoU en objetos grandes
++ Encoder resnet50 pre-entrenado es muy efectivo
+
+VENTAJAS U-Net:
++ Mas sencillo de entender
++ Encoder resnet34 usa menos VRAM
++ Decoder skip connections mas directo
++ Mejor para objetos pequeños (a veces)
+
+## TIEMPO DE ENTRENAMIENTO ESTIMADO
+
+RTX 4060 Laptop (8GB VRAM):
+
+U-Net (batch_size=8):
+  - Tiempo/epoch: ~29 minutos
+  - Tiempo 100 epochs: ~48 horas
+  
+DeepLabv3+ (batch_size=12):
+  - Tiempo/epoch: ~25-30 minutos (estimado, puede ser similar)
+  - Tiempo 100 epochs: ~40-50 horas (estimado)
+
+Note: DeepLabv3+ podria ser un poco mas rapido por epoch debido a mejor 
+implementacion, pero ambos toman tiempo similar para entrenar completamente.
+
+## COMO USAR
+
+Para entrenar DeepLabv3+:
+1. Abrir: notebooks/03_train_deeplabv3.ipynb
+2. Ejecutar celdas en orden
+3. Monitorear en TensorBoard:
+   tensorboard --logdir=logs/tensorboard
+4. Checkpoints guardados en: models/checkpoints/deeplabv3_resnet50_baseline/
+
+## CARGAS DE TRABAJO
+
+Para cambiar el BATCH_SIZE segun disponibilidad VRAM:
+
+8 GB VRAM:
+  - U-Net: batch_size=8 (ACTUAL)
+  - DeepLabv3+: batch_size=12 (ACTUAL)
+  
+6 GB VRAM:
+  - U-Net: batch_size=6
+  - DeepLabv3+: batch_size=8-10
+
+12+ GB VRAM:
+  - U-Net: batch_size=16
+  - DeepLabv3+: batch_size=16-20
+
+================================================================

@@ -1,0 +1,4 @@
+﻿Modelo,Encoder,Parámetros,Val mIoU,Test mIoU,Pixel Acc,IoU_Construccion,IoU_Bosque,IoU_DepositoAgua,IoU_ZonaVerde,IoU_ZonaDura,IoU_Via,IoU_Cerca,IoU_CabeceraMunicipal
+U-Net (ResNet-34),ResNet-34,24.4M,0.467,0.4631,0.7723,0.8017,0.757,0.4215,0.2014,0.3021,0.4402,0.1104,0.6709
+DeepLabv3+ (ResNet-50),ResNet-50,26.7M,0.4813,0.4782,0.7748,0.808,0.7711,0.5161,0.2615,0.2994,0.3708,0.1164,0.6822
+U-Net++ (ResNet-50),ResNet-50,49.0M,0.454,0.4236,0.7501,0.7958,0.7553,0.3332,0.0816,0.2428,0.4418,0.0846,0.6536
