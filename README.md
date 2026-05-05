@@ -39,6 +39,20 @@ Las clases con buena firma espectral en RGB (Construcción, Bosque, Cabecera mun
 | **DeepLabv3+** | **ResNet-50** | **27** |
 | U-Net++ | ResNet-50 | 21 |
 
+**Precisión planimétrica (clase Construcción, geodatabase IGAC como referencia):**
+
+Pareo geométrico filtrado por IoU ≥ 0.5 (correspondencias reales) — métrica directamente comparable con NSSDA / IGAC 1:1 000. Sobre 8 656 pares (80.2 % de los polígonos predichos, IoU medio = 0.796):
+
+| Municipio | n pares | RMSE (m) | Mediana (m) | LE95 (m) |
+|---|---:|---:|---:|---:|
+| Madrid | 1 378 | 5.43 | 1.11 | 7.25 |
+| Mosquera | 2 588 | 4.33 | 0.98 | 6.41 |
+| Tabio | 302 | 4.36 | 1.23 | 7.90 |
+| **Tocancipá** | **4 388** | **4.62** | **0.90** | **5.18** |
+| **Global** | **8 656** | **4.67** | **0.96** | **5.96** |
+
+> La mediana sub-métrica (0.96 m global) confirma que los polígonos correctamente detectados están georreferenciados con precisión consistente con la resolución del raster (10 cm/px). El IoU medio de 0.796 indica delineación geométricamente fiel cuando el modelo acierta. El detalle metodológico — incluyendo la comparación con un pareo nearest-neighbor sin filtro IoU (RMSE = 9.49 m, LE95 = 24.71 m), que cuantifica la contribución de los errores de detección/fragmentación al error agregado — está documentado en [`notebooks/10_rmse_planimetrico.ipynb`](notebooks/10_rmse_planimetrico.ipynb).
+
 ---
 
 ## 🧭 Metodología — CRISP-DM
@@ -120,6 +134,7 @@ Inferencia sobre 18 991 parches de test, comparativa entre modelos, postprocesam
 | [`notebooks/06_inference_unet_test.ipynb`](notebooks/06_inference_unet_test.ipynb) | Inferencia U-Net sobre test |
 | [`notebooks/07_comparativa_tres_modelos.ipynb`](notebooks/07_comparativa_tres_modelos.ipynb) | Comparativa cuantitativa entre arquitecturas |
 | [`notebooks/08_postprocessing.ipynb`](notebooks/08_postprocessing.ipynb) | Postprocesamiento morfológico (apertura/cierre) |
+| [`notebooks/10_rmse_planimetrico.ipynb`](notebooks/10_rmse_planimetrico.ipynb) | **Validación posicional** — RMSE / LE95 contra geodatabase IGAC con dos criterios de pareo (NN-centroides + IoU≥0.5) |
 | [`scripts/03_evaluation/generate_figura_3_3.py`](scripts/03_evaluation/generate_figura_3_3.py) | Partición espacial por grid 1 km × 1 km |
 | [`scripts/03_evaluation/generate_figura_4_2.py`](scripts/03_evaluation/generate_figura_4_2.py) · [`_zoom.py`](scripts/03_evaluation/generate_figura_4_2_zoom.py) · [`_madrid_zoom.py`](scripts/03_evaluation/generate_figura_4_2_madrid_zoom.py) | Vectores generados (Tocancipá / Madrid + zooms) |
 | [`scripts/03_evaluation/generate_figura_4_4.py`](scripts/03_evaluation/generate_figura_4_4.py) | Comparación ráster vs. vectorial · Mosquera |
@@ -188,6 +203,7 @@ IGAC_1K_SEGMENTATION/
 │   ├── 07_comparativa_tres_modelos.ipynb   [Evaluation]
 │   ├── 08_postprocessing.ipynb             [Evaluation]
 │   ├── 09_baselines_clasicos.ipynb         [Modeling + Evaluation — RF, SVM, OBIA]
+│   ├── 10_rmse_planimetrico.ipynb          [Evaluation — RMSE/LE95 vs IGAC]
 │   ├── 11_postprocesamiento_arcpy.ipynb    [Deployment]
 │   ├── 12_vectorizacion_arcpy.ipynb        [Deployment]
 │   └── README.md
