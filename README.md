@@ -108,6 +108,7 @@ Se reimplementan tres enfoques tradicionales **sobre el mismo split de train/val
 | [`scripts/02_training/_baseline_common.py`](scripts/02_training/_baseline_common.py) | Loader de parches y sampling estratificado |
 | [`scripts/02_training/run_all_baselines.bat`](scripts/02_training/run_all_baselines.bat) | Ejecuta entrenamiento + evaluación de los tres en secuencia |
 | [`scripts/03_evaluation/evaluate_baseline.py`](scripts/03_evaluation/evaluate_baseline.py) | Evaluador común — produce `test_metrics.json` y `confusion_matrix.npy` con la **misma estructura** que los modelos DL |
+| [`notebooks/09_baselines_clasicos.ipynb`](notebooks/09_baselines_clasicos.ipynb) | **Notebook todo-en-uno** — entrena los 3 baselines, evalúa, guarda métricas y genera comparativa final (tabla + gráficos) DL vs baselines |
 
 ### 5. Evaluation · *Evaluación*
 
@@ -186,6 +187,7 @@ IGAC_1K_SEGMENTATION/
 │   ├── 06_inference_unet_test.ipynb        [Evaluation]
 │   ├── 07_comparativa_tres_modelos.ipynb   [Evaluation]
 │   ├── 08_postprocessing.ipynb             [Evaluation]
+│   ├── 09_baselines_clasicos.ipynb         [Modeling + Evaluation — RF, SVM, OBIA]
 │   ├── 11_postprocesamiento_arcpy.ipynb    [Deployment]
 │   ├── 12_vectorizacion_arcpy.ipynb        [Deployment]
 │   └── README.md
