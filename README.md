@@ -12,9 +12,9 @@ Pipeline de segmentación semántica multiclase sobre ortofotografías RGB del I
 
 ## 📌 Resumen
 
-Se entrenan y comparan tres arquitecturas de segmentación semántica (**U-Net**, **DeepLabv3+**, **U-Net++**) sobre 8 clases de cobertura. El mejor modelo (DeepLabv3+ con encoder ResNet-50) se exporta a un pipeline vectorial automatizado (rasterizado → vectorización → simplificación RDP a 0.5 m) que produce capas listas para ArcGIS Pro.
+Se entrenan y comparan **tres arquitecturas de Deep Learning** (**U-Net**, **DeepLabv3+**, **U-Net++**) y **tres baselines clásicos** (**Random Forest**, **Linear SVM**, **OBIA**) — todos sobre el mismo split de train/val/test, las mismas etiquetas y los mismos parches, evaluados con la misma métrica. El mejor modelo (DeepLabv3+ con encoder ResNet-50) se exporta a un pipeline vectorial automatizado (rasterizado → vectorización → simplificación RDP a 0.5 m) que produce capas listas para ArcGIS Pro.
 
-**IoU por clase sobre el test set** (18 991 parches, 8 clases temáticas):
+**IoU por clase sobre el test set — modelos de Deep Learning** (18 991 parches, 8 clases temáticas):
 
 | Clase | U-Net (ResNet-34) | **DeepLabv3+ (ResNet-50)** | U-Net++ (ResNet-50) |
 |---|---:|---:|---:|
@@ -27,7 +27,9 @@ Se entrenan y comparan tres arquitecturas de segmentación semántica (**U-Net**
 | Cerca              | 0.110 | **0.116** | 0.085 |
 | Cabecera municipal | 0.671 | **0.682** | 0.654 |
 
-Las clases con buena firma espectral en RGB (Construcción, Bosque, Cabecera municipal) alcanzan IoU > 0.65 en los tres modelos. Las clases con respuesta espectral ambigua o lineal fina (Cerca, Zona verde, Zona dura, Vía) presentan IoU < 0.45, lo que confirma la limitación esperable del uso exclusivo de tres bandas visibles.
+> **Baselines clásicos (RF, SVM, OBIA)** — los scripts ya están disponibles en `scripts/02_training/train_{rf,svm,obia}_baseline.py`. Las métricas se completan al ejecutar los scripts (~6–10 h en CPU multinúcleo). Una vez generadas, se anexarán a esta tabla siguiendo el mismo formato.
+
+Las clases con buena firma espectral en RGB (Construcción, Bosque, Cabecera municipal) alcanzan IoU > 0.65 en los tres modelos de DL. Las clases con respuesta espectral ambigua o lineal fina (Cerca, Zona verde, Zona dura, Vía) presentan IoU < 0.45, lo que confirma la limitación esperable del uso exclusivo de tres bandas visibles.
 
 **Hiperparámetros y época de selección:**
 
@@ -77,19 +79,35 @@ Pipeline determinista de generación de parches con partición espacial estratif
 
 ### 4. Modeling · *Modelado*
 
+#### 4.1 Modelos de Deep Learning
+
 Tres arquitecturas con `segmentation-models-pytorch`, mismo loop de entrenamiento, scheduler `CosineAnnealingWarmRestarts(T₀=10, T_mult=2)`, loss combinada CE + Dice ponderada por clase.
 
 | Recurso | Modelo / propósito |
 |---|---|
 | [`scripts/02_training/train_unet.py`](scripts/02_training/train_unet.py) · [`notebooks/02_train_unet.ipynb`](notebooks/02_train_unet.ipynb) | U-Net (ResNet-34) |
 | [`scripts/02_training/train_deeplabv3_gpu_optimized.py`](scripts/02_training/train_deeplabv3_gpu_optimized.py) · [`notebooks/03_train_deeplabv3.ipynb`](notebooks/03_train_deeplabv3.ipynb) | DeepLabv3+ (ResNet-50) |
-| [`notebooks/04_train_unetplusplus.ipynb`](notebooks/04_train_unetplusplus.ipynb) | U-Net++ (ResNet-50) |
+| [`scripts/02_training/train_unetplusplus.py`](scripts/02_training/train_unetplusplus.py) · [`notebooks/04_train_unetplusplus.ipynb`](notebooks/04_train_unetplusplus.ipynb) | U-Net++ (ResNet-50) |
 | [`scripts/02_training/debug_gpu_detailed.py`](scripts/02_training/debug_gpu_detailed.py) · [`test_cpu_training.py`](scripts/02_training/test_cpu_training.py) | Diagnósticos de GPU/CPU para entrenamiento |
 | [`scripts/utils/trainers.py`](scripts/utils/trainers.py) | Clases `UNetTrainer`, `DeepLabV3Trainer`, `UnetPlusPlusTrainer` |
 | [`scripts/utils/dataset.py`](scripts/utils/dataset.py) | `SegmentationDataset` + dataloaders |
 | [`scripts/utils/augmentation.py`](scripts/utils/augmentation.py) | Albumentations: flips + rot90 |
 | [`scripts/utils/metrics.py`](scripts/utils/metrics.py) | mIoU, IoU por clase, pixel accuracy |
 | [`scripts/utils/config.py`](scripts/utils/config.py) | Paths, dispositivo, número de clases |
+
+#### 4.2 Baselines clásicos (comparación rigurosa)
+
+Se reimplementan tres enfoques tradicionales **sobre el mismo split de train/val/test** que los modelos de Deep Learning, para que la comparativa NO dependa de valores de literatura externa. Todos consumen las mismas etiquetas, los mismos parches y se evalúan con la misma clase `SegmentationMetrics`.
+
+| Recurso | Algoritmo |
+|---|---|
+| [`scripts/02_training/train_rf_baseline.py`](scripts/02_training/train_rf_baseline.py) | **Random Forest** píxel-a-píxel · 15 features handcrafted (RGB + estadísticas locales 5×5 + Sobel + Laplaciano) · 200 árboles |
+| [`scripts/02_training/train_svm_baseline.py`](scripts/02_training/train_svm_baseline.py) | **Linear SVM** (SGDClassifier `loss='hinge'`) · mismas features que RF · `class_weight='balanced'` |
+| [`scripts/02_training/train_obia_baseline.py`](scripts/02_training/train_obia_baseline.py) | **OBIA** · superpíxeles SLIC (n=150, compactness=10) · 14 features por segmento (color, textura, geometría) · clasificador RandomForest |
+| [`scripts/utils/handcrafted_features.py`](scripts/utils/handcrafted_features.py) | Módulo común de feature engineering (píxel + segmento) |
+| [`scripts/02_training/_baseline_common.py`](scripts/02_training/_baseline_common.py) | Loader de parches y sampling estratificado |
+| [`scripts/02_training/run_all_baselines.bat`](scripts/02_training/run_all_baselines.bat) | Ejecuta entrenamiento + evaluación de los tres en secuencia |
+| [`scripts/03_evaluation/evaluate_baseline.py`](scripts/03_evaluation/evaluate_baseline.py) | Evaluador común — produce `test_metrics.json` y `confusion_matrix.npy` con la **misma estructura** que los modelos DL |
 
 ### 5. Evaluation · *Evaluación*
 
